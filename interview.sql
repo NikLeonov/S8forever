@@ -24,11 +24,11 @@
 
 ## Транзакции и управление состоянием
 [ ] Понятие сериализации (serializability)
-[v] ACID: Atomicity, Consistency, Isolation, Durability - 
-[v] Уровни изоляции: Read Committed, Repeatable Read, Serializable
+[v] ACID: Atomicity, Consistency, Isolation, Durability - теория
+[v] Уровни изоляции: Read Committed, Repeatable Read, Serializable - теория 
 [ ] DEADLOCK, блокировки и конкурентный доступ
 
-[ ] SAVEPOINT, COMMIT и ROLLBACK
+[v] SAVEPOINT, COMMIT и ROLLBACK
 [ ] Автоматические коммиты при DDL
 
 Процедурное программирование в Oracle
