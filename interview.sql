@@ -69,6 +69,44 @@ WHERE d.emp_count > 5;
 CREATE INDEX emp_ename_idx ON emp(ename);
 
 /*
-Создание индекса по номеру департамента.
+Создание hash-индекса по номеру департамента.
 */
 CREATE INDEX emp_deptno_hash_idx ON emp(deptno) INDEXTYPE IS HASH;
+
+/*
+пример согласованного отката двух изменений - два insert
+*/
+
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (9999, 'NIKITA LEONOV', 10, 140000);
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (10000, 'JOHN SNOW', 20, 6500);
+ROLLBACK;
+
+/*
+пример согласованного коммита двух изменений - два commit
+*/
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (9999, 'PREV CANDIDATE', 10, 140000);
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (10000, 'JOHN SNOW', 20, 6500);
+COMMIT;
+
+
+/* Начинаем транзакцию автоматом */
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (9999, 'NIKITA LEONOV', 10, 150000);
+
+/* Устанавливаем точку сохранения */
+SAVEPOINT sp_after_first_candidate;
+
+/*  Вставляем вторую запись — тестовую  */
+INSERT INTO emp (empno, ename, deptno, sal)
+VALUES (10000, 'TEST USER', 20, 6500);
+
+/* Откатываем изменения до точки SAVEPOINT — откатит только вторую вставку */
+ROLLBACK TO SAVEPOINT sp_after_first_candidate;
+
+/* Фиксируем изменения — в таблице останется только запись Никиты Леонова */
+COMMIT;
+
