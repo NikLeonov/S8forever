@@ -86,7 +86,7 @@ CREATE INDEX emp_ename_idx ON emp(ename);
 CREATE INDEX emp_deptno_hash_idx ON emp(deptno) INDEXTYPE IS HASH;
 
 /*
-пример согласованного отката двух изменений - два insert
+пример согласованного отката двух изменений - два insert + rollback
 */
 
 INSERT INTO emp (empno, ename, deptno, sal)
@@ -96,7 +96,7 @@ VALUES (10000, 'JOHN SNOW', 20, 6500);
 ROLLBACK;
 
 /*
-пример согласованного коммита двух изменений - два commit
+пример согласованного коммита двух изменений - два insert + commit
 */
 INSERT INTO emp (empno, ename, deptno, sal)
 VALUES (9999, 'PREV CANDIDATE', 10, 140000);
@@ -105,20 +105,23 @@ VALUES (10000, 'JOHN SNOW', 20, 6500);
 COMMIT;
 
 
-/* Начинаем транзакцию автоматом */
+/*
+пример отката до SAVEPOINT -  insert, savepoint, insert, rollback to savepoint,  commit;
+*/
+-- Начинаем транзакцию автоматом  
 INSERT INTO emp (empno, ename, deptno, sal)
 VALUES (9999, 'NIKITA LEONOV', 10, 150000);
 
-/* Устанавливаем точку сохранения */
+-- Устанавливаем точку сохранения 
 SAVEPOINT sp_after_first_candidate;
 
-/*  Вставляем вторую запись — тестовую  */
+-- Вставляем вторую запись — тестовую  
 INSERT INTO emp (empno, ename, deptno, sal)
 VALUES (10000, 'TEST USER', 20, 6500);
 
-/* Откатываем изменения до точки SAVEPOINT — откатит только вторую вставку */
+-- Откатываем изменения до точки SAVEPOINT — откатит только вторую вставку 
 ROLLBACK TO SAVEPOINT sp_after_first_candidate;
 
-/* Фиксируем изменения — в таблице останется только запись Никиты Леонова */
+-- Фиксируем изменения — в таблице останется только запись Никиты Леонова 
 COMMIT;
 
