@@ -124,4 +124,13 @@ ROLLBACK TO SAVEPOINT sp_after_first_candidate;
 
 -- Фиксируем изменения — в таблице останется только запись Никиты Леонова 
 COMMIT;
+-- Функции RANK() и DENSE_RANK() Вывожу рейтинг сотрудников по зарплате внутри каждого отдела.
+SELECT 
+  empno,
+  ename,
+  deptno,
+  sal,
+  RANK() OVER (PARTITION BY deptno ORDER BY sal DESC) AS sal_rank,
+  DENSE_RANK() OVER (PARTITION BY deptno ORDER BY sal DESC) AS sal_dense_rank
+FROM emp;
 
